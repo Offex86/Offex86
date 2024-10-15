@@ -183,8 +183,8 @@ async function vlessOverWSHandler(request) {
 			const {
 				hasError,
 				message,
-				portRemote = 80,
-				addressRemote = 'ajax.cloudflare.com',
+				portRemote = 443,
+				addressRemote = '',
 				rawDataIndex,
 				vlessVersion = new Uint8Array([0, 0]),
 				isUDP,
@@ -258,8 +258,8 @@ async function handleTCPOutBound(remoteSocket, addressRemote, portRemote, rawCli
 	async function connectAndWrite(address, port) {
 		/** @type {import("@cloudflare/workers-types").Socket} */
 		const tcpSocket = connect({
-			hostname: ajax.cloudflare.com,
-			port: 80,
+			hostname: hostname,
+			port: port,
 		});
 		remoteSocket.value = tcpSocket;
 		log(`connected to ${address}:${port}`);
