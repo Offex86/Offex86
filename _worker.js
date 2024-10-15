@@ -5,7 +5,7 @@ import { connect } from 'cloudflare:sockets';
 // [Windows] Press "Win + R", input cmd and run:  Powershell -NoExit -Command "[guid]::NewGuid()"
 let userID = 'fb8bbc26-4b25-435b-b8d5-01bd5d0bc067';
 
-const proxyIPs = ['162.158.227.4']; // ProxyIP
+const proxyIPs = ['129.159.22.4']; // ProxyIP
 
 // if you want to use ipv6 or single proxyIP, please add comment at this line and remove comment at the next line
 let proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
@@ -183,8 +183,8 @@ async function vlessOverWSHandler(request) {
 			const {
 				hasError,
 				message,
-				portRemote = 443,
-				addressRemote = '',
+				portRemote = 80,
+				addressRemote = 'ajax.cloudflare.com',
 				rawDataIndex,
 				vlessVersion = new Uint8Array([0, 0]),
 				isUDP,
@@ -258,8 +258,8 @@ async function handleTCPOutBound(remoteSocket, addressRemote, portRemote, rawCli
 	async function connectAndWrite(address, port) {
 		/** @type {import("@cloudflare/workers-types").Socket} */
 		const tcpSocket = connect({
-			hostname: address,
-			port: port,
+			hostname: ajax.cloudflare.com,
+			port: 80,
 		});
 		remoteSocket.value = tcpSocket;
 		log(`connected to ${address}:${port}`);
@@ -696,7 +696,7 @@ async function handleUDPOutBound(webSocket, vlessResponseHeader, log) {
  * @returns {string}
  */
 function getVLESSConfig(userIDs, hostName) {
-	const commonUrlPart = `:443?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2048#${hostName}`;
+	const commonUrlPart = `:80?encryption=none&security=tls&sni=${hostName}&fp=randomized&type=ws&host=${hostName}&path=%2F%3Fed%3D2048#${hostName}`;
 	const hashSeparator = "################################################################";
 
 	// Split the userIDs into an array
