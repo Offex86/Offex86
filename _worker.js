@@ -10,11 +10,11 @@ const proxyIPs = []; // ProxyIP
 // if you want to use ipv6 or single proxyIP, please add comment at this line and remove comment at the next line
 let proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
 // use single proxyIP instead of random
-// let proxyIP = '';
+// let proxyIP = 'cdn.xn--b6gac.eu.org';
 // ipv6 proxyIP example remove comment to use
-// let proxyIP = "[]"
+// let proxyIP = "[2a01:4f8:c2c:123f:64:5:6810:c55a]"
 
-let dohURL = 
+let dohURL = 'https://sky.rethinkdns.com/1:-Pf_____9_8A_AMAIgE8kMABVDDmKOHTAKg='; // https://cloudflare-dns.com/dns-query or https://dns.google/dns-query
 
 if (!isValidUUID(userID)) {
 	throw new Error('uuid is invalid');
@@ -43,7 +43,7 @@ export default {
 				switch (url.pathname) {
 					case `/cf`: {
 						return new Response(JSON.stringify(request.cf, null, 4), {
-							status: 101,
+							status: 200,
 							headers: {
 								"Content-Type": "application/json;charset=utf-8",
 							},
@@ -81,10 +81,10 @@ export default {
 						// For any other path, reverse proxy to 'ramdom website' and return the original response, caching it in the process
 						const randomHostname = cn_hostnames[Math.floor(Math.random() * cn_hostnames.length)];
 						const newHeaders = new Headers(request.headers);
-						newHeaders.set('cf-connecting-ip', '104.28.157.93');
-						newHeaders.set('x-forwarded-for', '104.28.157.93');
-						newHeaders.set('x-real-ip', '104.28.157.93');
-						newHeaders.set('referer', 'https://www.google.com/search?q=offex86');
+						newHeaders.set('cf-connecting-ip', '1.2.3.4');
+						newHeaders.set('x-forwarded-for', '1.2.3.4');
+						newHeaders.set('x-real-ip', '1.2.3.4');
+						newHeaders.set('referer', 'https://www.google.com/search?q=edtunnel');
 						// Use fetch to proxy the request to 15 different domains
 						const proxyUrl = 'https://' + randomHostname + url.pathname + url.search;
 						let modifiedRequest = new Request(proxyUrl, {
