@@ -1,4 +1,4 @@
-// @ts-ignore
+//cf_vless_server
 import { connect } from 'cloudflare:sockets';
 
 // How to generate your own UUID:
