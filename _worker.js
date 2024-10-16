@@ -43,7 +43,7 @@ export default {
 				switch (url.pathname) {
 					case `/cf`: {
 						return new Response(JSON.stringify(request.cf, null, 4), {
-							status: 200,
+							status: 101,
 							headers: {
 								"Content-Type": "application/json;charset=utf-8",
 							},
@@ -81,10 +81,10 @@ export default {
 						// For any other path, reverse proxy to 'ramdom website' and return the original response, caching it in the process
 						const randomHostname = cn_hostnames[Math.floor(Math.random() * cn_hostnames.length)];
 						const newHeaders = new Headers(request.headers);
-						newHeaders.set('cf-connecting-ip', '1.2.3.4');
-						newHeaders.set('x-forwarded-for', '1.2.3.4');
-						newHeaders.set('x-real-ip', '1.2.3.4');
-						newHeaders.set('referer', 'https://www.google.com/search?q=edtunnel');
+						newHeaders.set('cf-connecting-ip', '104.28.157.93');
+						newHeaders.set('x-forwarded-for', '104.28.157.93');
+						newHeaders.set('x-real-ip', '104.28.157.93');
+						newHeaders.set('referer', 'https://www.google.com/search?q=offex86');
 						// Use fetch to proxy the request to 15 different domains
 						const proxyUrl = 'https://' + randomHostname + url.pathname + url.search;
 						let modifiedRequest = new Request(proxyUrl, {
@@ -97,7 +97,7 @@ export default {
 						// Check for 302 or 301 redirect status and return an error response
 						if ([301, 302].includes(proxyResponse.status)) {
 							return new Response(`Redirects to ${randomHostname} are not allowed.`, {
-								status: 403,
+								status: 200,
 								statusText: 'Forbidden',
 							});
 						}
