@@ -14,7 +14,7 @@ let proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
 // ipv6 proxyIP example remove comment to use
 // let proxyIP = "[]"
 
-let dohURL = 'https://sky.rethinkdns.com/1:-Pf_____9_8A_AMAIgE8kMABVDDmKOHTAKg='; // https://cloudflare-dns.com/dns-query or https://dns.google/dns-query
+let dohURL = 
 
 if (!isValidUUID(userID)) {
 	throw new Error('uuid is invalid');
