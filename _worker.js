@@ -5,14 +5,12 @@ import { connect } from 'cloudflare:sockets';
 // [Windows] Press "Win + R", input cmd and run:  Powershell -NoExit -Command "[guid]::NewGuid()"
 let userID = 'fb8bbc26-4b25-435b-b8d5-01bd5d0bc068';
 
-const proxyIPs = ['ofex.dk-vipop.dns-dynamic.net', '129.159.22.4']; // ProxyIP
+const proxyIPs = ['ofex.dk-vipop.dns-dynamic.net']; // ProxyIP
 
 // if you want to use ipv6 or single proxyIP, please add comment at this line and remove comment at the next line
 let proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
 // use single proxyIP instead of random
-// let proxyIP = 'cdn.xn--b6gac.eu.org';
-// ipv6 proxyIP example remove comment to use
-// let proxyIP = "[2a01:4f8:c2c:123f:64:5:6810:c55a]"
+// let proxyIP = 'ofex.dk-vipop.dns-dynamic.net';
 
 let dohURL = 'https://sky.rethinkdns.com/1:-Pf_____9_8A_AMAIgE8kMABVDDmKOHTAKg='; // https://cloudflare-dns.com/dns-query or https://dns.google/dns-query
 if (!isValidUUID(userID)) {
