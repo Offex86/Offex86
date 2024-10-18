@@ -184,7 +184,7 @@ async function vlessOverWSHandler(request) {
 				addressRemote = '',
 				rawDataIndex,
 				vlessVersion = new Uint8Array([0, 0]),
-				isUDP,
+				isTCP,
 			} = processVlessHeader(chunk, userID);
 			address = addressRemote;
 			portWithRandomLog = `${portRemote} ${isUDP ? 'udp' : 'tcp'} `;
@@ -193,13 +193,13 @@ async function vlessOverWSHandler(request) {
 				throw new Error(message); // cf seems has bug, controller.error will not end stream
 			}
 
-			// If UDP and not DNS port, close it
-			if (isUDP && portRemote !== 53) {
-				throw new Error('UDP proxy only enabled for DNS which is port 53');
+			// If TCP and not DNS port, close it
+			if (isTCP && portRemote !== 53) {
+				throw new Error('TCP proxy only enabled for DNS which is port 53');
 				// cf seems has bug, controller.error will not end stream
 			}
 
-			if (isUDP && portRemote === 53) {
+			if (isTCP && portRemote === 53) {
 				isDns = true;
 			}
 
@@ -207,7 +207,7 @@ async function vlessOverWSHandler(request) {
 			const vlessResponseHeader = new Uint8Array([vlessVersion[0], 0]);
 			const rawClientData = chunk.slice(rawDataIndex);
 
-			// TODO: support udp here when cf runtime has udp support
+			// TODO: support tcp here when cf runtime has tcp support
 			if (isDns) {
 				const { write } = await handleUDPOutBound(webSocket, vlessResponseHeader, log);
 				udpStreamWrite = write;
@@ -390,8 +390,8 @@ function processVlessHeader(vlessBuffer, userID) {
 		vlessBuffer.slice(18 + optLength, 18 + optLength + 1)
 	)[0];
 
-	// 0x01 TCP
-	// 0x02 UDP
+	// 0x01 UDP
+	// 0x02 TCP
 	// 0x03 MUX
 	if (command === 1) {
 		isUDP = false;
