@@ -5,12 +5,12 @@ import { connect } from 'cloudflare:sockets';
 // [Windows] Press "Win + R", input cmd and run:  Powershell -NoExit -Command "[guid]::NewGuid()"
 let userID = 'fb8bbc26-4b25-435b-b8d5-01bd5d0bc067';
 
-const proxyIPs = ['oex86.pages.dev', '172.66.47.160', 'off-vod.pages.dev', 'workers.cloudflare.oex86.pages.dev']; // ProxyIP
+const proxyIPs = ['off-vod.pages.dev']; // ProxyIP
 
 // if you want to use ipv6 or single proxyIP, please add comment at this line and remove comment at the next line
 let proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
 // use single proxyIP instead of random
-// let proxyIP = 'ajax.cloudflare.com';
+// let proxyIP = ''
 
 let dohURL = 'https://sky.rethinkdns.com/1:-Pf_____9_8A_AMAIgE8kMABVDDmKOHTAKg='; // https://cloudflare-dns.com/dns-query or https://dns.google/dns-query
 
