@@ -3,35 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Voice Generator</title>
+    <title>Online HTML Code Runner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        textarea {
+            width: 80%;
+            height: 200px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        iframe {
+            width: 80%;
+            height: 300px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+            background: white;
+        }
+    </style>
 </head>
 <body>
-    <h2>Enter Text to Generate Speech</h2>
-    <textarea id="text-input" rows="4" cols="50"></textarea><br>
-    <button onclick="generateVoice()">Generate Voice</button>
-    <br><br>
-    <audio id="audio-player" controls></audio>
+    <h1>ऑनलाइन HTML कोड रनर</h1>
+    <textarea id="htmlCode" placeholder="यहां अपना HTML कोड लिखें..."></textarea>
+    <br>
+    <button onclick="runCode()">कोड चलाएं</button>
+    <h2>आउटपुट:</h2>
+    <iframe id="outputFrame"></iframe>
 
     <script>
-        async function generateVoice() {
-            const text = document.getElementById("text-input").value;
-            if (!text) {
-                alert("Please enter text");
-                return;
-            }
-
-            const response = await fetch("http://localhost:5000/generate-voice", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text })
-            });
-
-            const data = await response.json();
-            if (data.audio_url) {
-                document.getElementById("audio-player").src = data.audio_url;
-            } else {
-                alert("Error: " + data.error);
-            }
+        function runCode() {
+            const htmlCode = document.getElementById('htmlCode').value;
+            const outputFrame = document.getElementById('outputFrame').contentWindow.document;
+            outputFrame.open();
+            outputFrame.write(htmlCode);
+            outputFrame.close();
         }
     </script>
 </body>
