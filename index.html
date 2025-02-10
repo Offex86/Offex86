@@ -1,59 +1,216 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online HTML Code Runner</title>
+    <title>बैकग्राउंड रिमूवल टूल</title>
+    <meta name="description" content="Remove background from any image online for free in just one click. AI-powered background remover tool for high-quality transparent images.">
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
             text-align: center;
         }
-        textarea {
-            width: 80%;
-            height: 200px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            font-size: 16px;
+        h1 {
+            color: #0056b3;
+            margin-bottom: 1.5rem;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
+        .upload-section {
+            margin-bottom: 1.5rem;
+        }
+        .upload-label {
+            display: block;
+            background: #0056b3;
             color: white;
-            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
+            margin-bottom: 1rem;
         }
-        button:hover {
-            background-color: #45a049;
+        .upload-label:hover {
+            background: #004494;
         }
-        iframe {
-            width: 80%;
-            height: 300px;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-            background: white;
+        #file-input {
+            display: none;
+        }
+        .preview-section {
+            margin-top: 1.5rem;
+            position: relative;
+        }
+        .preview-image {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .buttons {
+            margin-top: 1.5rem;
+        }
+        .buttons button {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        .buttons button:hover {
+            opacity: 0.9;
+        }
+        .buttons button.reset {
+            background: #dc3545;
+        }
+        .loading {
+            display: none;
+            margin-top: 1rem;
+            color: #0056b3;
+        }
+        @keyframes magic {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .magic-animation {
+            animation: magic 1s ease-in-out;
         }
     </style>
 </head>
 <body>
-    <h1>ऑनलाइन HTML कोड रनर</h1>
-    <textarea id="htmlCode" placeholder="यहां अपना HTML कोड लिखें..."></textarea>
-    <br>
-    <button onclick="runCode()">कोड चलाएं</button>
-    <h2>आउटपुट:</h2>
-    <iframe id="outputFrame"></iframe>
+    <div class="container">
+        <h1>बैकग्राउंड रिमूवल टूल</h1>
+        
+        <!-- इमेज अपलोड सेक्शन -->
+        <div class="upload-section">
+            <label for="file-input" class="upload-label">इमेज अपलोड करें</label>
+            <input type="file" id="file-input" accept="image/*">
+        </div>
+
+        <!-- प्रीव्यू सेक्शन -->
+        <div class="preview-section">
+            <img id="preview" class="preview-image" src="#" alt="प्रीव्यू इमेज">
+            <div class="loading" id="loading">प्रोसेसिंग...</div>
+            <div class="buttons">
+                <button id="remove-bg-btn">बैकग्राउंड रिमूव करें</button>
+                <button id="download-btn" class="download-btn" disabled>डाउनलोड करें</button>
+                <button id="reset-btn" class="reset">रीसेट करें</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        function runCode() {
-            const htmlCode = document.getElementById('htmlCode').value;
-            const outputFrame = document.getElementById('outputFrame').contentWindow.document;
-            outputFrame.open();
-            outputFrame.write(htmlCode);
-            outputFrame.close();
-        }
+        // API Key और API Endpoint
+        const API_KEY = 'JbANeXGkh91RzjC61SnAYamM';
+        const API_URL = 'https://api.remove.bg/v1.0/removebg';
+
+        // DOM Elements
+        const fileInput = document.getElementById('file-input');
+        const previewImage = document.getElementById('preview');
+        const removeBgBtn = document.getElementById('remove-bg-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const loading = document.getElementById('loading');
+
+        let uploadedImage = null;
+
+        // इमेज अपलोड करने पर
+        fileInput.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                uploadedImage = file;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    removeBgBtn.disabled = false;
+                    downloadBtn.disabled = true;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // बैकग्राउंड रिमूव करें
+        removeBgBtn.addEventListener('click', async function () {
+            if (!uploadedImage) {
+                alert('कृपया पहले एक इमेज अपलोड करें।');
+                return;
+            }
+
+            loading.style.display = 'block';
+            previewImage.classList.add('magic-animation');
+
+            const formData = new FormData();
+            formData.append('image_file', uploadedImage);
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'X-Api-Key': API_KEY,
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('API कॉल असफल: ' + response.statusText);
+                }
+
+                const result = await response.blob();
+                const url = URL.createObjectURL(result);
+                previewImage.src = url;
+                downloadBtn.href = url;
+                downloadBtn.download = 'background-removed.png';
+                downloadBtn.disabled = false;
+            } catch (error) {
+                console.error('त्रुटि:', error);
+                alert('त्रुटि: इमेज प्रोसेस नहीं की जा सकी।');
+            } finally {
+                loading.style.display = 'none';
+                previewImage.classList.remove('magic-animation');
+            }
+        });
+
+        // डाउनलोड बटन
+        downloadBtn.addEventListener('click', function () {
+            alert('इमेज डाउनलोड हो गई है!');
+        });
+
+        // रीसेट बटन
+        resetBtn.addEventListener('click', function () {
+            fileInput.value = '';
+            previewImage.src = '#';
+            previewImage.style.display = 'none';
+            removeBgBtn.disabled = true;
+            downloadBtn.disabled = true;
+            uploadedImage = null;
+        });
+    </script>
+
+    <!-- Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Free Background Remover - Remove Image Background Online",
+      "description": "Remove background from any image online for free in just one click. AI-powered background remover tool for high-quality transparent images.",
+      "url": "https://yourwebsite.com/background-remover",
+      "image": "https://yourwebsite.com/example-image.jpg"
+    }
     </script>
 </body>
 </html>
